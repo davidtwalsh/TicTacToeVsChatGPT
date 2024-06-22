@@ -5,15 +5,15 @@ import ChatGPTService from './ChatGPTService';
 const GridButtons = () => {
   // State for buttons with initial data
   const [buttons, setButtons] = useState([
-    { id: 0, text: '' },
-    { id: 1, text: '' },
-    { id: 2, text: '' },
-    { id: 3, text: '' },
-    { id: 4, text: '' },
-    { id: 5, text: '' },
-    { id: 6, text: '' },
-    { id: 7, text: '' },
-    { id: 8, text: '' },
+    { id: 0, text: 'E' },
+    { id: 1, text: 'E' },
+    { id: 2, text: 'E' },
+    { id: 3, text: 'E' },
+    { id: 4, text: 'E' },
+    { id: 5, text: 'E' },
+    { id: 6, text: 'E' },
+    { id: 7, text: 'E' },
+    { id: 8, text: 'E' },
   ]);
 
   const [playerTurn, setPlayerTurn] = useState('X');
@@ -22,8 +22,12 @@ const GridButtons = () => {
 
   // Function to handle button press and update text
   const handlePress = (id) => {
-    if (buttons[id].text != ''){
-      console.log(`"Spot ${id} is already taken!"`)
+    if (buttons[id].text != 'E'){
+      console.log(`"Spot ${id} is already taken!"`);
+      return
+    }
+    if (playerTurn == 'O') {
+      console.log('button pressed but its ChatGPTs turn');
       return
     }
     // Find the button in the state array and update its text
@@ -35,8 +39,6 @@ const GridButtons = () => {
     //Update player turn
     if (playerTurn === 'X'){
       setPlayerTurn('O')
-    } else if (playerTurn === 'O'){
-      setPlayerTurn('X')
     }
   };
 
@@ -45,10 +47,14 @@ const GridButtons = () => {
     checkForWin(); // Call the function after state update
   }, [buttons]); // Dependency array ensures this effect runs only when buttons state changes
 
+  useEffect(() => {
+    getChatGPTInput(); // Call the function after state update
+  }, playerTurn); // Dependency array ensures this effect runs only when playerturn state changes
+
   const checkForWin = () => {
     const curPlayer = playerTurn;
     //top row
-    if (buttons[0].text != '' && buttons[0].text === buttons[1].text && buttons[0].text === buttons[2].text){
+    if (buttons[0].text != 'E' && buttons[0].text === buttons[1].text && buttons[0].text === buttons[2].text){
       if (buttons[0].text === 'X'){
         gameOver('X');
       } else {
@@ -56,7 +62,7 @@ const GridButtons = () => {
       }
     }
     //middle row
-    else if (buttons[3].text != '' && buttons[3].text === buttons[4].text && buttons[3].text === buttons[5].text){
+    else if (buttons[3].text != 'E' && buttons[3].text === buttons[4].text && buttons[3].text === buttons[5].text){
       if (buttons[3].text === 'X'){
         gameOver('X');
       } else {
@@ -64,7 +70,7 @@ const GridButtons = () => {
       }
     }  
     //bottom row
-    else if (buttons[6].text != '' && buttons[6].text === buttons[7].text && buttons[6].text === buttons[8].text){
+    else if (buttons[6].text != 'E' && buttons[6].text === buttons[7].text && buttons[6].text === buttons[8].text){
       if (buttons[6].text === 'X'){
         gameOver('X');
       } else {
@@ -72,7 +78,7 @@ const GridButtons = () => {
       }
     }  
     //first col
-    else if (buttons[0].text != '' && buttons[0].text === buttons[3].text && buttons[0].text === buttons[6].text){
+    else if (buttons[0].text != 'E' && buttons[0].text === buttons[3].text && buttons[0].text === buttons[6].text){
       if (buttons[0].text === 'X'){
         gameOver('X');
       } else {
@@ -80,7 +86,7 @@ const GridButtons = () => {
       }
     }
     //second col
-    else if (buttons[1].text != '' && buttons[1].text === buttons[4].text && buttons[1].text === buttons[7].text){
+    else if (buttons[1].text != 'E' && buttons[1].text === buttons[4].text && buttons[1].text === buttons[7].text){
       if (buttons[1].text === 'X'){
         gameOver('X');
       } else {
@@ -88,7 +94,7 @@ const GridButtons = () => {
       }
     }
     //third col
-    else if (buttons[2].text != '' && buttons[2].text === buttons[5].text && buttons[2].text === buttons[8].text){
+    else if (buttons[2].text != 'E' && buttons[2].text === buttons[5].text && buttons[2].text === buttons[8].text){
       if (buttons[2].text === 'X'){
         gameOver('X');
       } else {
@@ -96,7 +102,7 @@ const GridButtons = () => {
       }
     }
     //diagonal left to right
-    else if (buttons[0].text != '' && buttons[0].text === buttons[4].text && buttons[0].text === buttons[8].text){
+    else if (buttons[0].text != 'E' && buttons[0].text === buttons[4].text && buttons[0].text === buttons[8].text){
       if (buttons[0].text === 'X'){
         gameOver('X');
       } else {
@@ -104,7 +110,7 @@ const GridButtons = () => {
       }
     }
     //diagonal right to left
-    else if (buttons[2].text != '' && buttons[2].text === buttons[4].text && buttons[2].text === buttons[6].text){
+    else if (buttons[2].text != 'E' && buttons[2].text === buttons[4].text && buttons[2].text === buttons[6].text){
       if (buttons[2].text === 'X'){
         gameOver('X');
       } else {
@@ -124,7 +130,7 @@ const GridButtons = () => {
   const restartGame = () => {
     console.log("resetting board");
     setPlayerTurn('X');
-    const resetButtons = buttons.map(button => ({ ...button, text: '' }));
+    const resetButtons = buttons.map(button => ({ ...button, text: 'E' }));
     setButtons(resetButtons);
     setGameOverText('');
   }
@@ -143,6 +149,93 @@ const GridButtons = () => {
     return buttons.map((button) => renderButton(button));
   };
 
+  const getChatGPTInput = () => {
+    if (playerTurn === 'X'){
+      return //its the users turn so return out
+    }
+    let input = '';
+    input += 'We are playing TicTacToe.' + '\n';
+    input += 'I am X and you are O.' + '\n';
+    input += 'E means the space is empty.' + '\n';
+    input += 'The state of the board is:' + '\n';
+
+    let board = '';
+    board += buttons[0].text + ' | ' + buttons[1].text + ' | ' + buttons[2].text + '\n';
+    board += buttons[3].text + ' | ' + buttons[4].text + ' | ' + buttons[5].text + '\n';
+    board += buttons[6].text + ' | ' + buttons[7].text + ' | ' + buttons[8].text + '\n';
+
+    input += board;
+    input += 'It is your turn, where do you want to go?' + '\n';
+    input += 'Answer in the following format:' + '\n';
+    input += '(Row#,Column#)' + '\n';
+    input += 'Only include the line above in your response.';
+    input += 'The possible choices you can make are: (0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1) or (2,2)'
+
+    console.log(input);
+    handleSend(input);
+  };
+
+  const handleSend = async (input) => {
+    const result = await ChatGPTService(input);
+
+    processChatGPTTurn(result);
+  };
+
+  const processChatGPTTurn = (response) => {
+
+    console.log(`ChatGPT Response is: ${response}`);
+    try {
+      response = response.slice(1, -1); // This will give remove the parentheses
+      response = response.replaceAll('Row','');
+      response = response.replaceAll('Column','')
+      response = response.replaceAll('#','');
+      response = response.replaceAll(' ','');
+      console.log(`Parsed response: ` + response);
+      let parts = response.split(',') // will give array ["row #,col #"]
+      let row = parseInt(parts[0],10);
+      let col = parseInt(parts[1],10);
+
+      butNumber = (3 * row) + col;
+      if (buttons[butNumber].text == 'E'){
+        buttons[butNumber].text = 'O';
+        const updatedButtons = buttons.map(button =>
+          button.id === butNumber ? { ...button, text: 'O'} : button
+        );
+        setButtons(updatedButtons);
+        setPlayerTurn('X');
+      } else {
+        buttonNumber = 0;
+        for (let i = 0; i < buttons.length; i++){
+          if (buttons[i].text === 'E'){
+            buttonNumber = i;
+            break;
+          }
+        }
+        const updatedButtons = buttons.map(button =>
+          button.id === buttonNumber ? { ...button, text: 'O'} : button
+        );
+        setButtons(updatedButtons);
+        setPlayerTurn('X');
+      }
+
+    } catch (exception) {
+      console.log(exception);
+      console.log('Error parsing ChatGPT response, default placing space for it in first empty space');
+      buttonNumber = 0;
+      for (let i = 0; i < buttons.length; i++){
+        if (buttons[i].text === 'E'){
+          buttonNumber = i;
+          break;
+        }
+      }
+      const updatedButtons = buttons.map(button =>
+        button.id === buttonNumber ? { ...button, text: 'O'} : button
+      );
+      setButtons(updatedButtons);
+      setPlayerTurn('X');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.gameOverText}>{gameOverText}</Text>
@@ -152,34 +245,9 @@ const GridButtons = () => {
           Restart Button
         </Text>
       </TouchableOpacity>
-      <ChatComponent/>
     </View>
   );
 };
-
-const ChatComponent = () => {
-  const [input, setInput] = useState('');
-  const [response, setResponse] = useState('');
-
-  const handleSend = async () => {
-    const result = await ChatGPTService(input);
-    setResponse(result);
-  };
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Ask ChatGPT:</Text>
-      <TextInput
-        style={styles.input}
-        value={input}
-        onChangeText={setInput}
-      />
-      <Button title="Send" onPress={handleSend} />
-      {response ? <Text style={styles.response}>{response}</Text> : null}
-    </View>
-  );
-};
-
 
 const styles = StyleSheet.create({
   container: {
@@ -204,7 +272,7 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   buttonText: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
     color: 'black',
   },
@@ -220,26 +288,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     color: 'black',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 16,
-  },
-  label: {
-    fontSize: 18,
-    marginBottom: 8,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 12,
-    padding: 8,
-  },
-  response: {
-    marginTop: 16,
-    fontSize: 16,
   },
 });
 
