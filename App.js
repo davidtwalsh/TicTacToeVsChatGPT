@@ -24,6 +24,10 @@ const GridButtons = () => {
 
   // Function to handle button press and update text
   const handlePress = (id) => {
+
+    if (isGameOver === true){
+      return;
+    }
     if (buttons[id].text != 'E'){
       console.log(`"Spot ${id} is already taken!"`);
       return
@@ -141,9 +145,12 @@ const GridButtons = () => {
 
   // Function to render a single button
   const renderButton = (button) => {
+    // Conditionally render buttonText based on button.text value
+    const buttonText = button.text === 'E' ? "" : button.text;
+
     return (
       <TouchableOpacity key={button.id} style={styles.button} onPress={() => handlePress(button.id)}>
-        <Text style={styles.buttonText}>{button.text}</Text>
+        <Text style={styles.buttonText}>{buttonText}</Text>
       </TouchableOpacity>
     );
   };
