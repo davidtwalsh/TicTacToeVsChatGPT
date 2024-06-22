@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Button, TextInput} from 'react-native';
+import ChatGPTService from './ChatGPTService';
 
 const GridButtons = () => {
   // State for buttons with initial data
@@ -151,6 +152,30 @@ const GridButtons = () => {
           Restart Button
         </Text>
       </TouchableOpacity>
+      <ChatComponent/>
+    </View>
+  );
+};
+
+const ChatComponent = () => {
+  const [input, setInput] = useState('');
+  const [response, setResponse] = useState('');
+
+  const handleSend = async () => {
+    const result = await ChatGPTService(input);
+    setResponse(result);
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.label}>Ask ChatGPT:</Text>
+      <TextInput
+        style={styles.input}
+        value={input}
+        onChangeText={setInput}
+      />
+      <Button title="Send" onPress={handleSend} />
+      {response ? <Text style={styles.response}>{response}</Text> : null}
     </View>
   );
 };
@@ -195,6 +220,26 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     color: 'black',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 16,
+  },
+  label: {
+    fontSize: 18,
+    marginBottom: 8,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 12,
+    padding: 8,
+  },
+  response: {
+    marginTop: 16,
+    fontSize: 16,
   },
 });
 
