@@ -2,6 +2,8 @@ import React, { useState, useEffect} from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Button, TextInput} from 'react-native';
 import ChatGPTService from './ChatGPTService';
 
+let isGameOver = false;
+
 const GridButtons = () => {
   // State for buttons with initial data
   const [buttons, setButtons] = useState([
@@ -49,7 +51,7 @@ const GridButtons = () => {
 
   useEffect(() => {
     getChatGPTInput(); // Call the function after state update
-  }, playerTurn); // Dependency array ensures this effect runs only when playerturn state changes
+  }, [playerTurn]); // Dependency array ensures this effect runs only when playerturn state changes
 
   const checkForWin = () => {
     const curPlayer = playerTurn;
@@ -125,6 +127,7 @@ const GridButtons = () => {
     } else {
       setGameOverText("ChatGPT wins!");
     }
+    isGameOver = true;
   }
 
   const restartGame = () => {
@@ -133,6 +136,7 @@ const GridButtons = () => {
     const resetButtons = buttons.map(button => ({ ...button, text: 'E' }));
     setButtons(resetButtons);
     setGameOverText('');
+    isGameOver = false;
   }
 
   // Function to render a single button
@@ -183,6 +187,9 @@ const GridButtons = () => {
 
   const processChatGPTTurn = (response) => {
 
+    if (isGameOver == true){
+      return;
+    }
     console.log(`ChatGPT Response is: ${response}`);
     try {
       response = response.slice(1, -1); // This will give remove the parentheses
@@ -285,6 +292,7 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   gameOverText: {
+    height: 40,
     fontSize: 30,
     fontWeight: 'bold',
     color: 'black',
