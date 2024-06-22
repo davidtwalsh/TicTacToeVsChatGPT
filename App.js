@@ -1,6 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Button, TextInput} from 'react-native';
 import ChatGPTService from './ChatGPTService';
+import { Audio } from 'expo-av';
 
 let isGameOver = false;
 
@@ -36,6 +37,7 @@ const GridButtons = () => {
       console.log('button pressed but its ChatGPTs turn');
       return
     }
+    playButtonClickSound()
     // Find the button in the state array and update its text
     const updatedButtons = buttons.map(button =>
       button.id === id ? { ...button, text: playerTurn} : button
@@ -249,6 +251,16 @@ const GridButtons = () => {
       setPlayerTurn('X');
     }
   };
+
+  const playButtonClickSound = async () => {
+    const soundObject = new Audio.Sound();
+    try {
+      await soundObject.loadAsync(require('./assets/click.wav'));
+      await soundObject.playAsync();
+    } catch (error) {
+      console.log('Error loading sound', error);
+    }
+  }
 
   return (
     <View style={styles.container}>
