@@ -7,3 +7,5 @@ This is a React Native project where you play TicTacToe against ChatGPT. Every t
 3) Run "yarn add expo" (if you don't have yarn then run "npm install -g yarn" first)
 4) Run "npm install --save-dev metro"
 5) Start the project with the command "npx expo start"
+
+![tictactoe1](https://github.com/davidtwalsh/TicTacToeVsChatGPT/assets/46041406/b9d96da8-3a58-4d9f-aaf4-817d30d7935f)
